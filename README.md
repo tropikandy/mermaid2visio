@@ -1,6 +1,7 @@
 # Mermaid2Visio
 
 ![License](https://img.shields.io/badge/license-ISC-blue)
+![Build Status](https://github.com/tropikandy/mermaid2visio/actions/workflows/ci.yml/badge.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Mac%20%7C%20Linux-lightgrey)
 ![Status](https://img.shields.io/badge/status-Active-green)
 
