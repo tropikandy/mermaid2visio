@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mermaid to Visio Converter</title>
+    <style>
+        :root { --primary: #0078d4; --bg: #f3f2f1; --surface: #ffffff; --border: #e1dfdd; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; display: flex; height: 100vh; flex-direction: column; background: var(--bg); color: #323130; }
+        
+        header { 
+            background: var(--primary); color: white; padding: 0 1.5rem; height: 50px; 
+            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { font-size: 1.1rem; font-weight: 600; margin: 0; }
+        
+        .main-container { display: flex; flex: 1; overflow: hidden; }
+        .pane { flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--border); background: var(--surface); }
+        .pane:last-child { border-right: none; }
+        
+        .pane-header { 
+            padding: 0.8rem 1rem; background: var(--surface); border-bottom: 1px solid var(--border); 
+            font-weight: 600; font-size: 0.9rem; color: #605e5c; display: flex; justify-content: space-between;
+        }
+        
+        textarea { 
+            flex: 1; font-family: 'Consolas', 'Monaco', monospace; font-size: 14px; 
+            padding: 1rem; resize: none; border: none; outline: none; line-height: 1.5; background: #faf9f8;
+        }
+        textarea:focus { background: var(--surface); }
+        
+        #preview { 
+            flex: 1; padding: 2rem; overflow: auto; 
+            display: flex; justify-content: center; align-items: flex-start;
+            background-image: radial-gradient(#e1dfdd 1px, transparent 1px); background-size: 20px 20px;
+        }
+        
+        button { 
+            background: white; color: var(--primary); border: none; padding: 0.5rem 1rem; 
+            font-weight: 600; cursor: pointer; border-radius: 2px; transition: all 0.2s;
+        }
+        button:hover { background: #eff6fc; }
+        button:active { background: #deecf9; }
+        button.primary { background: white; color: var(--primary); }
+        
+        .status { font-size: 0.8rem; opacity: 0.8; margin-right: 1rem; }
+    </style>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
+
+        const inputEl = document.getElementById('input');
+        const previewEl = document.getElementById('preview');
+        const btn = document.getElementById('convertBtn');
+        const statusEl = document.getElementById('status');
+
+        const debounce = (func, wait) => {
+            let timeout;
+            return (...args) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        };
+
+        window.updatePreview = async () => {
+            try {
+                const code = inputEl.value;
+                if (!code.trim()) return;
+                
+                // Clear and render
+                previewEl.innerHTML = '';
+                const { svg } = await mermaid.render('graphDiv', code);
+                previewEl.innerHTML = svg;
+                statusEl.textContent = 'Preview updated';
+            } catch (e) {
+                console.error(e);
+                // Don't wipe preview on error, just log it or show toast
+                statusEl.textContent = 'Syntax Error';
+            }
+        };
+
+        window.convert = async () => {
+            const code = inputEl.value;
+            const originalText = btn.innerText;
+            btn.innerText = 'Converting...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/convert', {
+                    method: 'POST',
+                    body: code
+                });
+                
+                if (!res.ok) throw new Error(await res.text());
+
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'diagram.vsdx';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                statusEl.textContent = 'Download started';
+            } catch (e) {
+                alert('Error: ' + e.message);
+                statusEl.textContent = 'Conversion failed';
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        };
+
+        // Auto-update
+        inputEl.addEventListener('input', debounce(window.updatePreview, 800));
+        
+        // Initial load
+        window.updatePreview();
+    </script>
+</head>
+<body>
+    <header>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 2L2 22h20L12 2zm0 3.5L18.5 20h-13L12 5.5z"/></svg>
+            <h1>Mermaid 2 Visio</h1>
+        </div>
+        <div>
+            <span id="status" class="status">Ready</span>
+            <button id="convertBtn" onclick="convert()">Download .VSDX</button>
+        </div>
+    </header>
+    <div class="main-container">
+        <div class="pane">
+            <div class="pane-header">
+                <span>Mermaid Code</span>
+            </div>
+            <textarea id="input" spellcheck="false">graph TD
+    classDef container fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    classDef success fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+
+    subgraph "Process Flow"
+        Start[Start] --> Process{Valid?}
+    end
+
+    Process -- Yes --> Finish[Success]
+    Process -- No --> Error[Log Error]
+
+    class Start,Process container
+    class Finish success</textarea>
+        </div>
+        <div class="pane">
+            <div class="pane-header">
+                <span>Live Preview</span>
+            </div>
+            <div id="preview"></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -21,5 +21,6 @@
     "outDir": "./dist",
     "esModuleInterop": true,
     "isolatedModules": true
-  }
+  },
+  "exclude": ["src/public"]
 }
