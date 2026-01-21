@@ -1,0 +1,27 @@
+graph TD
+    %% Central Hub
+    DB[("CENTRAL DATABASE")]
+    
+    %% Modules
+    Order[Order Management]
+    Prod[Production Execution]
+    Inv[Inventory Management]
+    QA[Quality Management]
+    Analytics[Analytics & Trending]
+    Inst[Instrument Integration]
+
+    %% Connections
+    Order <-->|Orders, Tier Calc| DB
+    Prod <-->|Batch Records, Recipes| DB
+    Inv <-->|Stock Levels, Expiry| DB
+    QA <-->|QC Results, CoA Gen| DB
+    Analytics <-->|SPC Charts, Failure Analysis| DB
+    Inst <-->|SPR & PEA Raw Data| DB
+
+    %% Internal Data in DB
+    note[Antigen Library<br/>Lot Records<br/>Module Defs<br/>Compat Matrix]
+    DB --- note
+
+    %% Styling
+    style DB fill:#37474f,stroke:#fff,color:#fff
+    style note fill:#fff,stroke:#333,stroke-dasharray: 5 5

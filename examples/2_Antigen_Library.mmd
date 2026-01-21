@@ -1,0 +1,33 @@
+flowchart TD
+    %% Nodes
+    Start[New Antigen Lot Arrives]
+    Inspect{Incoming Inspection}
+    Quarantine[Quarantine Storage -80C]
+    SPR[SPR Characterization]
+    
+    %% SPR Sub-steps
+    subgraph SPR_Steps [SPR Method]
+        direction TB
+        M1[Immobilize PEA Capture mAb] --> M2[Inject Antigen Dilutions]
+        M2 --> M3[Measure Binding RU]
+        M3 --> M4[Calculate Active Concentration]
+    end
+
+    Criteria{Acceptance Criteria}
+    Pass[Lot Record Created & Active]
+    Fail[Reject & Return]
+
+    %% Connections
+    Start --> Inspect
+    Inspect -- Pass --> Quarantine
+    Inspect -- Fail --> Fail
+    Quarantine --> SPR_Steps
+    SPR_Steps -->|Output: Active Conc| Criteria
+    
+    Criteria -- "Active/Total > 50% & R2 > 0.99" --> Pass
+    Criteria -- "Criteria Not Met" --> Fail
+
+    %% Styling
+    style Pass fill:#c8e6c9,stroke:#2e7d32
+    style Fail fill:#ffcdd2,stroke:#c62828
+    style SPR_Steps fill:#e3f2fd,stroke:#1565c0

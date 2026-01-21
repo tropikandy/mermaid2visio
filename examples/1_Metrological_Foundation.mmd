@@ -1,0 +1,31 @@
+graph TD
+    %% Global Styles
+    classDef highRisk fill:#f9f9f9,stroke:#333,stroke-dasharray: 5 5;
+    classDef processControl fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    classDef criticalStep fill:#a5d6a7,stroke:#1b5e20,stroke-width:2px;
+    classDef failure fill:#ffcdd2,stroke:#b71c1c;
+
+    subgraph Traditional ["Traditional Approach (High Risk)"]
+        direction TB
+        T1[Supplier says '1 mg/mL'] -->|Trust & Use| T2(Formulate)
+        T2 -->|Hope it works| T3(Extensive End-Product QC)
+        T3 --> T4{Pass/Fail?}
+        T4 -->|Fail| T5[Scrap Batch / High Waste]
+        
+        class T1,T2,T3 highRisk;
+        class T5 failure;
+    end
+
+    subgraph System ["Your Approach (Process Control)"]
+        direction TB
+        S1[Supplier says '1 mg/mL'] -->|Skepticism| S2[SPR Characterization]
+        S2 -->|Input: PEA Capture mAb| S3[Calculate Active Conc: 0.73 mg/mL]
+        S3 -->|Precise Input| S4(Formulate with Confidence)
+        S4 --> S5[PEA Verification]
+        S5 --> S6{Pass/Fail?}
+        S6 -->|Pass| S7[Release]
+        S6 -->|Fail| S8[Rare: Root Cause Analysis]
+
+        class S1,S2,S4,S5 processControl;
+        class S3,S7 criticalStep;
+    end

@@ -1,0 +1,38 @@
+flowchart TB
+    %% Swimlanes defined as subgraphs
+    subgraph Tier1 [Tier 1: Stock Products]
+        direction TB
+        T1_Start(Batch Production) --> T1_Form[Formulation: Fixed Panel]
+        T1_Form --> T1_Lyo[Lyophilization]
+        T1_Lyo --> T1_QC[Batch QC PEA]
+        T1_QC --> T1_Inv[Release to Inventory]
+        
+        T1_Order[Customer Order] --> T1_Pick[Pick from Inventory]
+        T1_Inv -.-> T1_Pick
+        T1_Pick --> T1_Ship[Pack & Ship: Same Day]
+    end
+
+    subgraph Tier2 [Tier 2: Modular Assembly]
+        direction TB
+        T2_Order[Customer Order] --> T2_Class[Order Classification]
+        T2_Inv[Module Inventory] --> T2_Assy[Assembly: Modules + Singles]
+        T2_Class --> T2_Assy
+        T2_Assy --> T2_Lyo[Lyophilization]
+        T2_Lyo --> T2_QC[Verification QC]
+        T2_QC --> T2_Ship[Release & Ship: 3-5 Days]
+    end
+
+    subgraph Tier3 [Tier 3: Bespoke Build]
+        direction TB
+        T3_Req[Customer Request] --> T3_Feas[Feasibility Check]
+        T3_Feas --> T3_Prot[Formulation Protocol]
+        T3_Prot --> T3_Exec[Formulation Execution]
+        T3_Exec --> T3_Lyo[Lyophilization]
+        T3_Lyo --> T3_QC[Full QC: Physical + PEA]
+        T3_QC --> T3_Ship[Release & Ship: 7-10 Days]
+    end
+
+    %% Styling to distinguish tiers
+    style Tier1 fill:#f1f8e9,stroke:#33691e
+    style Tier2 fill:#e3f2fd,stroke:#0d47a1
+    style Tier3 fill:#fff3e0,stroke:#e65100

@@ -1,0 +1,31 @@
+flowchart TD
+    Start[QC Result Received] --> Check{All Sentinels 85-115%?}
+    
+    Check -- YES --> Release[RELEASE BATCH]
+    Check -- NO --> Count{How many OOS?}
+    
+    %% Branch 1
+    Count -- "1 Antigen" --> Inv1[Lot Investigation]
+    Inv1 --> LotCheck{Used in other batches?}
+    LotCheck -- "Yes & OK" --> Matrix[Matrix Effect / Compatibility Issue]
+    LotCheck -- "Yes & Fail" --> LotProb[LOT PROBLEM: Quarantine Lot]
+    
+    %% Branch 2
+    Count -- "2-3 Antigens" --> Inv2[Compatibility Check]
+    Inv2 --> Interact{Known Interaction?}
+    Interact -- Yes --> Split[Reformulate: Split Vials]
+    Interact -- No --> DeepDive[New Incompatibility Found]
+    
+    %% Branch 3
+    Count -- ">3 Antigens" --> Inv3[Process Failure]
+    Inv3 --> Scrap[SCRAP BATCH]
+    Scrap --> RootCause[Root Cause: Calc or Process Error]
+
+    %% Styles
+    classDef green fill:#c8e6c9,stroke:#2e7d32;
+    classDef red fill:#ffcdd2,stroke:#b71c1c;
+    classDef yellow fill:#fff9c4,stroke:#fbc02d;
+    
+    class Release green;
+    class Scrap,LotProb,RootCause red;
+    class Check,Count,LotCheck,Interact yellow;

@@ -1,0 +1,8 @@
+graph TD
+    Start((Start)) --> Process[Normal Process]
+    Process --> Decision{Is it OK?}
+    Decision -- Yes --> Success(Success Stadium)
+    Decision -- No --> Error[/Error Parallel/]
+    Success --> End[[End Subroutine]]
+    Error --> Database[(Data)]
+    Database --> End
