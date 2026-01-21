@@ -8,25 +8,13 @@
 
 Unlike legacy tools that rely on a local installation of Visio (COM automation), this project is built on **Node.js** and generates the VSDX XML structure directly. This means it runs on **Windows, macOS, and Linux**, and produces high-fidelity files without requiring Visio to be installed on the machine performing the conversion.
 
-## Why use this over `md2visio`?
+## Key Advantages
 
-| Feature | `mermaid2visio` (This Repo) | `md2visio` / `md2visio-gui` |
-| :--- | :--- | :--- |
-| **Architecture** | **Native Node.js** (Direct XML Gen) | C# / .NET (Visio COM Interop) |
-| **Cross-Platform** | ✅ **Windows, Mac, Linux** | ❌ Windows Only |
-| **Visio Required?** | ❌ **No** (Runs anywhere) | ⚠️ **Yes** (Must be installed) |
-| **Smart Glue** | ✅ **Dynamic Routing** | ✅ Visio Auto-Connect |
-| **AI Integration** | ✅ **MCP Server** (Claude/Agents) | ❌ None |
-| **GUI** | ✅ **Web-based** (Localhost) | ✅ Windows Forms |
-
-## Key Features
-
-- 🚀 **Zero Dependencies**: Does NOT require Microsoft Visio to be installed.
-- 🧠 **AI-Native**: Includes a **Model Context Protocol (MCP)** server, allowing AI agents (like Claude Desktop) to generate Visio files directly.
-- 🔗 **Smart Glue**: Implements dynamic connector routing (right-angle and straight) that snaps to shape connection points (`PinX`/`PinY`), ensuring diagrams remain connected when you move shapes in Visio.
-- 📂 **Container Support**: Maps Mermaid `subgraph` to Visio Containers.
-- 🖥️ **Web GUI**: Includes a built-in local web server for real-time preview and conversion.
-- 🎨 **High Fidelity**: Preserves styles, text alignment, and hyperlinks.
+- **No Visio License Required**: Built on a modern Node.js architecture that generates native `.vsdx` XML directly. This means you don't need to buy or install Microsoft Visio to perform conversions.
+- **Cross-Platform**: Runs seamlessly on **Windows, macOS, and Linux**.
+- **AI-Native Integration**: Includes a built-in **Model Context Protocol (MCP)** server. Connect it to AI agents (like Claude Desktop) to give them the "skill" to generate professional diagrams for you.
+- **Smart Glue & Dynamic Routing**: Features an advanced routing engine that creates "Smart Glue" connectors. When you open the file in Visio and move a shape, the lines follow and reroute automatically.
+- **Web-Based Visual Editor**: Comes with a local web GUI for instant previewing and one-click downloads.
 
 ## Installation
 
