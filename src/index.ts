@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import fs from 'fs';
 import path from 'path';
 import { program } from 'commander';
@@ -39,7 +40,7 @@ program
         }
 
         if (options.verbose) console.log("Parsing Mermaid...");
-        const graph = await parseMermaid(definition);
+        const graph = await parseMermaid(definition, { verbose: !!options.verbose });
         
         if (options.verbose) {
             console.log(`Parsed graph:`);
@@ -50,7 +51,7 @@ program
 
         console.log("Generating VSDX...");
         const generator = new VsdxGenerator();
-        const buffer = await generator.generate(graph);
+        const buffer = await generator.generate(graph, definition);
 
         fs.writeFileSync(outputFile, buffer);
         console.log(`✅ Success! Output saved to: ${outputFile}`);
